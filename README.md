@@ -38,6 +38,7 @@ Accuracy 0.89 (ag test data, 0.9 with no penaltization)
 ## To-do list
 
 - support multiple dataset
+- visualization
 
 ## Notes
 
