@@ -16,6 +16,7 @@ tf.app.flags.DEFINE_integer('labels', 5, 'number of label classes')
 tf.app.flags.DEFINE_integer('word_pad_length', 60, 'word pad length for training')
 tf.app.flags.DEFINE_float('learn_rate', 1e-2, 'learn rate for training optimization')
 tf.app.flags.DEFINE_boolean('shuffle', True, 'shuffle data FLAG')
+tf.app.flags.DEFINE_boolean('train', True, 'train mode FLAG')
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -44,44 +45,51 @@ with tf.Session() as sess:
   # build graph
   model.build_graph(n=word_pad_length)
   # Downstream Application
-  global_step = tf.Variable(0, trainable=False, name='global_step')
-  learn_rate = tf.train.exponential_decay(lr, global_step, 500, 0.95, staircase=True)
-  labels = tf.placeholder('float32', shape=[None, tag_size])
-  net = tflearn.fully_connected(model.M, 1000, activation='relu')
-  logits = tflearn.fully_connected(net, tag_size, activation=None)
-  loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=labels, logits=logits)) + tf.reduce_mean(model.P)
-  params = model.trainable_vars()
-  gradients = tf.gradients(loss, params)
-  clipped_gradients, _ = tf.clip_by_global_norm(gradients, 1.0)
-  optimizer = tf.train.AdamOptimizer(learn_rate)
-  opt = optimizer.apply_gradients(zip(clipped_gradients, params), global_step=global_step)
+  with tf.variable_scope('DownstreamApplication'):
+    global_step = tf.Variable(0, trainable=False, name='global_step')
+    learn_rate = tf.train.exponential_decay(lr, global_step, 500, 0.95, staircase=True)
+    labels = tf.placeholder('float32', shape=[None, tag_size])
+    net = tflearn.fully_connected(model.M, 1000, activation='relu')
+    logits = tflearn.fully_connected(net, tag_size, activation=None)
+    _lambda = 0.005
+    loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=labels, logits=logits)) + _lambda * tf.reduce_mean(model.P)
+    params = model.trainable_vars()
+    gradients = tf.gradients(loss, params)
+    clipped_gradients, _ = tf.clip_by_global_norm(gradients, 1.0)
+    optimizer = tf.train.AdamOptimizer(learn_rate)
+    opt = optimizer.apply_gradients(zip(clipped_gradients, params), global_step=global_step)
 
   # Start Training
   sess.run(tf.global_variables_initializer())
 
   words, tags = load_csv('./data/ag_news_csv/train.csv', target_columns=[0], columns_to_ignore=[1], target_dict=label_dict)
+  words = string_parser(words, fit=True)
   if FLAGS.shuffle == True:
     words, tags = shuffle(words, tags)
-
-  words = string_parser(words, fit=True)
   word_input = tflearn.data_utils.pad_sequences(words, maxlen=word_pad_length)
   total = len(word_input)
   step_print = int((total/batch_size) / 13)
 
-  print('start training')
-  for epoch_num in range(num_epochs):
-    epoch_loss = 0
-    step_loss = 0
-    for i in range(int(total/batch_size)):
-      batch_input, batch_tags = (word_input[i*batch_size:(i+1)*batch_size], tags[i*batch_size:(i+1)*batch_size])
-      result = sess.run([opt, loss, learn_rate, global_step], feed_dict={model.input_pl: batch_input, labels: batch_tags})
-      step_loss += result[1]
-      epoch_loss += result[1]
-      if i % step_print == (step_print-step_print):
-        print(f'step_log: (epoch: {epoch_num}, step: {i}, global_step: {result[3]}, learn_rate: {result[2]}), Loss: {step_loss/step_print})')
-        step_loss = 0
-    print(f'epoch_log: (epoch: {epoch_num}, global_step: {global_step}), Loss:{epoch_loss/(total/batch_size)})')
-
+  if FLAGS.train == True:
+    print('start training')
+    for epoch_num in range(num_epochs):
+      epoch_loss = 0
+      step_loss = 0
+      for i in range(int(total/batch_size)):
+        batch_input, batch_tags = (word_input[i*batch_size:(i+1)*batch_size], tags[i*batch_size:(i+1)*batch_size])
+        result = sess.run([opt, loss, learn_rate, global_step], feed_dict={model.input_pl: batch_input, labels: batch_tags})
+        step_loss += result[1]
+        epoch_loss += result[1]
+        if i % step_print == (step_print-step_print):
+          print(f'step_log: (epoch: {epoch_num}, step: {i}, global_step: {result[3]}, learn_rate: {result[2]}), Loss: {step_loss/step_print})')
+          step_loss = 0
+      print(f'epoch_log: (epoch: {epoch_num}, global_step: {global_step}), Loss:{epoch_loss/(total/batch_size)})')
+    saver = tf.train.Saver()
+    saver.save(sess, './model.ckpt')
+  else:
+    saver = tf.train.Saver()
+    saver.restore(sess, './model.ckpt')
+  
   words, tags = load_csv('./data/ag_news_csv/test.csv', target_columns=[0], columns_to_ignore=[1], target_dict=label_dict)
   words = string_parser(words, fit=True)
   word_input = tflearn.data_utils.pad_sequences(words, maxlen=word_pad_length)
