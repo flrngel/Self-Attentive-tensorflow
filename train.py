@@ -14,6 +14,7 @@ tf.app.flags.DEFINE_integer('num_epochs', 5, 'number of epochs to train')
 tf.app.flags.DEFINE_integer('batch_size', 20, 'batch size to train in one step')
 tf.app.flags.DEFINE_integer('labels', 5, 'number of label classes')
 tf.app.flags.DEFINE_integer('word_pad_length', 60, 'word pad length for training')
+tf.app.flags.DEFINE_integer('decay_step', 500, 'decay steps')
 tf.app.flags.DEFINE_float('learn_rate', 1e-2, 'learn rate for training optimization')
 tf.app.flags.DEFINE_boolean('shuffle', True, 'shuffle data FLAG')
 tf.app.flags.DEFINE_boolean('train', True, 'train mode FLAG')
@@ -47,7 +48,7 @@ with tf.Session() as sess:
   # Downstream Application
   with tf.variable_scope('DownstreamApplication'):
     global_step = tf.Variable(0, trainable=False, name='global_step')
-    learn_rate = tf.train.exponential_decay(lr, global_step, 500, 0.95, staircase=True)
+    learn_rate = tf.train.exponential_decay(lr, global_step, FLAGS.decay_step, 0.95, staircase=True)
     labels = tf.placeholder('float32', shape=[None, tag_size])
     net = tflearn.fully_connected(model.M, 1000, activation='relu')
     logits = tflearn.fully_connected(net, tag_size, activation=None)
