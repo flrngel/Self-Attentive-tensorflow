@@ -14,13 +14,12 @@ class SelfAttentive(object):
       self.u = u
       self.r = r
 
-      initializer = tf.random_normal_initializer(stddev=0.1)
+      initializer = tf.random_normal_initializer
 
       embedding = tf.get_variable('embedding', shape=[100000, self.d],
           initializer=initializer)
       self.input_pl = tf.placeholder(tf.int32, shape=[None, self.n])
       input_embed = tf.nn.embedding_lookup(embedding, self.input_pl)
-      print(input_embed)
 
       # Declare trainable variables
       # shape(W_s1) = d_a * 2u
