@@ -35,10 +35,12 @@ $ python train.py
 
 Accuracy 0.895
 
-![visualize without penalization](https://raw.githubusercontent.com/flrngel/Self-Attentive-tensorflow/master/resources/visualize_without_penalization.png|width=100)
+<img src="https://raw.githubusercontent.com/flrngel/Self-Attentive-tensorflow/master/resources/visualize_without_penalization.png" width=300>
+
 visualize without penalization
 
-![visualize without penalization](https://raw.githubusercontent.com/flrngel/Self-Attentive-tensorflow/master/resources/visualize_with_penalization.png|width=100)
+<img src="https://raw.githubusercontent.com/flrngel/Self-Attentive-tensorflow/master/resources/visualize_with_penalization.png" width=300>
+
 visualize with penalization
 
 ## To-do list
