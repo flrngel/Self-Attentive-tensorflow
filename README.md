@@ -33,7 +33,7 @@ $ python train.py
 
 ## Result
 
-Accuracy 0.89 (ag test data, 0.9 with no penaltization)
+Accuracy 0.895
 
 ## To-do list
 
