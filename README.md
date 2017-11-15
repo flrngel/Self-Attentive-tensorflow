@@ -38,7 +38,6 @@ Accuracy 0.895
 ## To-do list
 
 - support multiple dataset
-- visualization
 
 ## Notes
 
