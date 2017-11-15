@@ -5,7 +5,7 @@ class SelfAttentive(object):
   Tensorflow implementation of 'A Structured Self Attentive Sentence Embedding'
   (https://arxiv.org/pdf/1703.03130.pdf)
   '''
-  def build_graph(self, n=60, d=100, u=128, d_a=100, r=100):
+  def build_graph(self, n=60, d=100, u=128, d_a=350, r=30):
     with tf.variable_scope('SelfAttentive'):
       # Hyperparmeters from paper
       self.n = n
@@ -14,7 +14,7 @@ class SelfAttentive(object):
       self.u = u
       self.r = r
 
-      initializer = tf.random_normal_initializer
+      initializer = tf.contrib.layers.xavier_initializer()
 
       embedding = tf.get_variable('embedding', shape=[100000, self.d],
           initializer=initializer)
@@ -30,7 +30,7 @@ class SelfAttentive(object):
           initializer=initializer)
 
       # BiRNN
-      self.batch_size = tf.shape(self.input_pl)[0]
+      self.batch_size = batch_size = tf.shape(self.input_pl)[0]
 
       cell_fw = tf.contrib.rnn.LSTMCell(u)
       cell_bw = tf.contrib.rnn.LSTMCell(u)
@@ -42,7 +42,7 @@ class SelfAttentive(object):
           dtype=tf.float32)
       H = tf.concat([H[0], H[1]], axis=2)
 
-      A = tf.nn.softmax(
+      self.A = A = tf.nn.softmax(
           tf.map_fn(
             lambda x: tf.matmul(self.W_s2, x), 
             tf.tanh(
@@ -52,9 +52,11 @@ class SelfAttentive(object):
 
       self.M = tf.matmul(A, H)
 
-      self.P = tf.square(tf.norm(tf.map_fn(lambda Ax:
-          tf.matmul(Ax, tf.transpose(Ax)) - tf.eye(d_a), A),
-          ord='fro', axis=[-2, -1]))
+      A_T = tf.transpose(A, perm=[0, 2, 1])
+      tile_eye = tf.tile(tf.eye(r), [batch_size, 1])
+      tile_eye = tf.reshape(tile_eye, [-1, r, r])
+      AA_T = tf.matmul(A, A_T) - tile_eye
+      self.P = tf.square(tf.norm(AA_T, axis=[-2, -1], ord='fro'))
 
   def trainable_vars(self):
     return [var for var in
