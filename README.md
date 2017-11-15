@@ -1,6 +1,6 @@
 # Self-Attentive-Tensorflow
 
-![model image of TagSpace](https://raw.githubusercontent.com/flrngel/Self-Attentive-tensorflow/master/resources/self-attentive-model.png)
+![model image of Self Attentive](https://raw.githubusercontent.com/flrngel/Self-Attentive-tensorflow/master/resources/self-attentive-model.png)
 
 Tensorflow implementation of **A Structured Self-Attentive Sentence Embedding**
 
@@ -34,6 +34,12 @@ $ python train.py
 ## Result
 
 Accuracy 0.895
+
+![visualize without penalization](https://raw.githubusercontent.com/flrngel/Self-Attentive-tensorflow/master/resources/visualize_without_penalization.png)
+visualize without penalization
+
+![visualize without penalization](https://raw.githubusercontent.com/flrngel/Self-Attentive-tensorflow/master/resources/visualize_with_penalization.png)
+visualize with penalization
 
 ## To-do list
 
