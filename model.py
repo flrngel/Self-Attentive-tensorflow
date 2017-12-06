@@ -5,8 +5,8 @@ class SelfAttentive(object):
   Tensorflow implementation of 'A Structured Self Attentive Sentence Embedding'
   (https://arxiv.org/pdf/1703.03130.pdf)
   '''
-  def build_graph(self, n=60, d=100, u=128, d_a=350, r=30):
-    with tf.variable_scope('SelfAttentive'):
+  def build_graph(self, n=60, d=100, u=128, d_a=350, r=30, reuse=False):
+    with tf.variable_scope('SelfAttentive', reuse=reuse):
       # Hyperparmeters from paper
       self.n = n
       self.d = d
