@@ -5,6 +5,7 @@ import re
 from model import SelfAttentive
 from sklearn.utils import shuffle
 from reader import load_csv, VocabDict
+from ww import f
 
 '''
 parse
@@ -94,13 +95,12 @@ with tf.Session() as sess:
         epoch_loss += result[1]
         if i % step_print == (step_print-step_print):
           if FLAGS.penalization == True:
-            print(f'step_log: (epoch: {epoch_num}, step: {i}, global_step: {result[3]}, learn_rate: {result[2]}), Loss: {step_loss/step_print}, Penalization: {result[4]})')
+            print(f('step_log: (epoch: {epoch_num}, step: {i}, global_step: {result[3]}, learn_rate: {result[2]}), Loss: {step_loss/step_print}, Penalization: {result[4]})'))
           else:
-            print(f'step_log: (epoch: {epoch_num}, step: {i}, global_step: {result[3]}, learn_rate: {result[2]}), Loss: {step_loss/step_print})')
-          #print(f'{result[4]}')
+            print(f('step_log: (epoch: {epoch_num}, step: {i}, global_step: {result[3]}, learn_rate: {result[2]}), Loss: {step_loss/step_print})'))
           step_loss = 0
       print('***')
-      print(f'epoch {epoch_num}: (global_step: {result[3]}), Average Loss: {epoch_loss/(total/batch_size)})')
+      print(f('epoch {epoch_num}: (global_step: {result[3]}), Average Loss: {epoch_loss/(total/batch_size)})'))
       print('***\n')
     saver = tf.train.Saver()
     saver.save(sess, './model.ckpt')
@@ -136,13 +136,13 @@ with tf.Session() as sess:
             w = "___"
           else:
             w = ww[j]
-          f.write(f'\t<span style="margin-left:3px;background-color:rgba(255,0,0,{alpha})">{w}</span>\n')
+          f.write(f('\t<span style="margin-left:3px;background-color:rgba(255,0,0,{alpha})">{w}</span>\n'))
         f.write('</p>\n')
       f.write('</div>\n')
 
   if FLAGS.visualize == True:
     f.write('</body></html>')
     f.close()
-  print(f'Test accuracy: {rs/total}')
+  print(f('Test accuracy: {rs/total}'))
 
   sess.close()

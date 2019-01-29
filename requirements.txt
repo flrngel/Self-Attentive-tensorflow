@@ -21,3 +21,4 @@ tensorflow==1.12.0
 termcolor==1.1.0
 tflearn==0.3.2
 Werkzeug==0.14.1
+ww==0.2.1
