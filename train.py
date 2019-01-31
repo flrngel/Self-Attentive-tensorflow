@@ -21,7 +21,7 @@ tf.app.flags.DEFINE_boolean('shuffle', True, 'shuffle data FLAG')
 tf.app.flags.DEFINE_boolean('train', True, 'train mode FLAG')
 tf.app.flags.DEFINE_boolean('visualize', False, 'visualize FLAG')
 tf.app.flags.DEFINE_boolean('penalization', True, 'penalization FLAG')
-tf.app.flags.DEFINE_string('data', './data/ag_news_csv/train.csv', 'penalization FLAG')
+tf.app.flags.DEFINE_string('datadir', './data/ag_news_csv/train.csv', 'penalization FLAG')
 
 FLAGS = tf.app.flags.FLAGS
 
