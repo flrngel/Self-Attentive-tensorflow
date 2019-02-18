@@ -12,7 +12,7 @@ Frobenius norm with attention
 
 ## Usage
 
-Download [ag news dataset](httphttps://github.com/mhjabreel/CharCNN/tree/36791268d7eec96dc3330cf7eedbfb427524b604/data/ag_news_csv) as below
+Download [ag news dataset](https://github.com/mhjabreel/CharCNN/tree/36791268d7eec96dc3330cf7eedbfb427524b604/data/ag_news_csv) as below
 
 ```
 $ tree ./data
