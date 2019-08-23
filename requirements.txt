@@ -20,5 +20,5 @@ tensorboard==1.12.2
 tensorflow==1.12.2
 termcolor==1.1.0
 tflearn==0.3.2
-Werkzeug==0.14.1
+Werkzeug==0.15.3
 ww==0.2.1
